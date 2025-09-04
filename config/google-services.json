@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "853506181577",
+    "project_id": "wd-will",
+    "storage_bucket": "wd-will.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:853506181577:android:a9f5cdf29320b9b730c018",
+        "android_client_info": {
+          "package_name": "com.wd.app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC7ARyPJZ76XTUQscwAgqwKf1jxpXRG-rU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

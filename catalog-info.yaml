@@ -1,0 +1,8 @@
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: "will-mobile"
+spec:
+  type: service
+  owner: codgital
+  lifecycle: experimental
