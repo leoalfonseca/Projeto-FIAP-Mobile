@@ -1,4 +1,4 @@
-import { Diamond, Home } from '@tamagui/lucide-icons';
+import { ArrowLeftRight, Home } from '@tamagui/lucide-icons';
 
 export const MenuItems = [
   {
@@ -7,8 +7,8 @@ export const MenuItems = [
     title: 'Dashboard'
   },
   {
-    name: 'produtos/page',
-    icon: Diamond,
-    title: 'Produtos'
+    name: 'transacoes/page',
+    icon: ArrowLeftRight,
+    title: 'Transações'
   }
 ];

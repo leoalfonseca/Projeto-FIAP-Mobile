@@ -17,6 +17,14 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     barStyle: 'light-content',
     backgroundColor: '#131625'
   },
+  extra: {
+    EXPO_PUBLIC_FB_API_KEY: process.env.EXPO_PUBLIC_FB_API_KEY,
+    EXPO_PUBLIC_FB_AUTH_DOMAIN: process.env.EXPO_PUBLIC_FB_AUTH_DOMAIN,
+    EXPO_PUBLIC_FB_PROJECT_ID: process.env.EXPO_PUBLIC_FB_PROJECT_ID,
+    EXPO_PUBLIC_FB_STORAGE_BUCKET: process.env.EXPO_PUBLIC_FB_STORAGE_BUCKET,
+    EXPO_PUBLIC_FB_MESSAGING_SENDER_ID: process.env.EXPO_PUBLIC_FB_MESSAGING_SENDER_ID,
+    EXPO_PUBLIC_FB_APP_ID: process.env.EXPO_PUBLIC_FB_APP_ID
+  },
   plugins: [
     'expo-router',
     [
@@ -45,7 +53,8 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
       }
     ],
     'expo-font',
-    'expo-web-browser'
+    'expo-web-browser',
+    'expo-secure-store'
   ],
   experiments: {
     typedRoutes: true

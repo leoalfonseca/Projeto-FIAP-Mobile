@@ -1,4 +1,3 @@
-// AverageTicketCard.native.tsx (mockado)
 import { AlertCircle } from '@tamagui/lucide-icons';
 import React, { useMemo, useState, useCallback } from 'react';
 import { LayoutChangeEvent } from 'react-native';
@@ -8,8 +7,6 @@ import {
   VictoryArea,
   VictoryAxis,
   VictoryChart,
-  VictoryLabel,
-  VictoryScatter,
   VictoryTooltip,
   VictoryVoronoiContainer
 } from 'victory-native';
@@ -86,11 +83,6 @@ const MOCK_INSIGHTS: InlineComparative[] = [
   }
 ];
 
-const mockedUpdateTime = new Date().toLocaleTimeString('pt-BR', {
-  hour: '2-digit',
-  minute: '2-digit'
-});
-
 const formatCurrency = (n: number) =>
   new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(n ?? 0);
 
@@ -110,7 +102,6 @@ export function AverageTicketCard({
   }, []);
 
   const insights = MOCK_INSIGHTS;
-  const updateTime = mockedUpdateTime;
 
   const filtered = useMemo<InlineComparative>(() => {
     return insights.find((i) => i.id === active) ?? insights[0];
@@ -249,14 +240,10 @@ export function AverageTicketCard({
                   data: { stroke: primary, strokeWidth: 2, fill: 'url(#avgTicketGradient)' }
                 }}
               />
-
-            
             </VictoryChart>
           </Svg>
         )}
       </YStack>
-
-    
     </Card>
   );
 }

@@ -1,18 +1,18 @@
+import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter } from 'expo-router';
+import { Auth, signInWithEmailAndPassword } from 'firebase/auth';
+import { useForm, Controller } from 'react-hook-form';
 import { Keyboard, KeyboardAvoidingView, Platform, TouchableWithoutFeedback } from 'react-native';
 import { Image } from 'react-native';
 import Toast from 'react-native-toast-message';
 import { View, Text, YStack, Card } from 'tamagui';
-import { LinearGradient } from 'expo-linear-gradient';
-import { useForm, Controller } from 'react-hook-form';
 
 import { Button } from '@/components/Button/Button';
 import { Input } from '@/components/Input/Input';
 
-type FormValues = {
-  email: string;
-  password: string;
-};
+import { auth } from '@/infra/firebase/firebase';
+
+type FormValues = { email: string; password: string };
 
 export function LoginScreen() {
   const router = useRouter();
@@ -22,12 +22,22 @@ export function LoginScreen() {
     handleSubmit,
     watch,
     formState: { errors, isSubmitting }
-  } = useForm<FormValues>({
-    defaultValues: { email: '', password: '' } 
-  });
+  } = useForm<FormValues>({ defaultValues: { email: '', password: '' } });
 
-  const onSubmit = (_data: FormValues) => {
-    router.push('/(tabs)/dashboard/page');
+  const onSubmit = async ({ email, password }: FormValues) => {
+    try {
+      await signInWithEmailAndPassword(auth as Auth, email.trim(), password);
+      router.replace('/(tabs)/dashboard/page');
+    } catch (e: any) {
+      const code = e?.code || '';
+      let msg = 'Falha ao entrar.';
+      if (code === 'auth/invalid-credential' || code === 'auth/wrong-password')
+        msg = 'Credenciais inválidas.';
+      if (code === 'auth/user-not-found') msg = 'Usuário não encontrado.';
+      if (code === 'auth/too-many-requests') msg = 'Muitas tentativas. Tente mais tarde.';
+
+      Toast.show({ type: 'error', text1: msg });
+    }
   };
 
   const email = watch('email');
@@ -69,7 +79,6 @@ export function LoginScreen() {
                 <Text color="$gray800" fontWeight="700" fontSize={16} marginBottom={-8}>
                   Usuário
                 </Text>
-
                 <Controller
                   control={control}
                   name="email"
@@ -92,13 +101,14 @@ export function LoginScreen() {
                   )}
                 />
                 {!!errors.email?.message && (
-                  <Text color="$red10Dark" fontSize={12}>{errors.email.message}</Text>
+                  <Text color="$red10Dark" fontSize={12}>
+                    {errors.email.message}
+                  </Text>
                 )}
 
                 <Text color="$gray800" fontWeight="700" fontSize={16} marginBottom={-8}>
                   Senha
                 </Text>
-
                 <Controller
                   control={control}
                   name="password"
@@ -120,7 +130,9 @@ export function LoginScreen() {
                   )}
                 />
                 {!!errors.password?.message && (
-                  <Text color="$red10Dark" fontSize={12}>{errors.password.message}</Text>
+                  <Text color="$red10Dark" fontSize={12}>
+                    {errors.password.message}
+                  </Text>
                 )}
 
                 <Button
@@ -129,7 +141,7 @@ export function LoginScreen() {
                   disabled={!canSubmit}
                   onPress={handleSubmit(onSubmit)}
                 >
-                  Continuar
+                  {isSubmitting ? 'Entrando...' : 'Continuar'}
                 </Button>
               </YStack>
             </Card>

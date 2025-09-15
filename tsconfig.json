@@ -1,11 +1,7 @@
 {
   "compilerOptions": {
     "target": "ESNext",
-    "lib": [
-      "dom",
-      "dom.iterable",
-      "esnext"
-    ],
+    "lib": ["dom", "dom.iterable", "esnext"],
     "allowJs": true,
     "skipLibCheck": true,
     "strict": true,
@@ -25,9 +21,8 @@
       }
     ],
     "paths": {
-      "@/*": [
-        "./src/*"
-      ]
+      "@firebase/auth": ["./node_modules/@firebase/auth/dist/index.rn.d.ts"],
+      "@/*": ["./src/*"]
     }
   },
   "include": [
@@ -38,11 +33,9 @@
     "**/*.tsx",
     ".next/types/**/*.ts",
     ".expo/types/**/*.ts",
-    "expo-env.d.ts"
-, "metro.config.js"  ],
-  "exclude": [
-    "node_modules",
-    "public/firebase-messaging-sw.js"
+    "expo-env.d.ts",
+    "metro.config.js"
   ],
+  "exclude": ["node_modules", "public/firebase-messaging-sw.js"],
   "extends": "expo/tsconfig.base"
 }

@@ -70,7 +70,7 @@ const tokens = createTokens({
 const system = {
   tokens,
   themes: {
-    will: {
+    fiap: {
       bg: '$background',
       bgHover: '$primary200',
       bgPress: '$primary300',
