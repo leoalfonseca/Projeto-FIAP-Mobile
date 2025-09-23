@@ -8,16 +8,24 @@ import { TransactionCard } from '../components/TransactionCard';
 import { TransactionModal } from '../components/TransactionModal';
 import { TransactionsFilters } from '../components/TransactionsFilters';
 import { useTransactions } from '../hooks/useTransactions';
+import { Transaction } from '../model/Transaction';
 import { TxFilters } from '../services/transactions.service';
+import { downloadReceipt } from '../utils/downloadReceipt';
 
 export function TransactionsScreen() {
   const tokens = getTokens();
   const { open, onOpen, onClose } = useDisclosure();
 
   const [filters, setFilters] = useState<any>({});
+  const [selectedTransaction, setSelectedTransaction] = useState<Transaction | null>(null);
   const { items, loading, hasMore, loadMore, refresh, refreshing } = useTransactions(
     filters as TxFilters
   );
+
+  function handleEditTransaction(transaction: Transaction) {
+    setSelectedTransaction(transaction);
+    onOpen();
+  }
 
   return (
     <YStack
@@ -49,7 +57,13 @@ export function TransactionsScreen() {
           <FlatList
             data={items}
             keyExtractor={(item) => item.id}
-            renderItem={({ item }) => <TransactionCard transaction={item} />}
+            renderItem={({ item }: { item: Transaction }) => (
+              <TransactionCard
+                transaction={item}
+                onEdit={() => handleEditTransaction(item)}
+                onDownloadReceipt={() => downloadReceipt(item.receiptUrl as string)}
+              />
+            )}
             onEndReachedThreshold={0.6}
             onEndReached={() => hasMore && loadMore()}
             ListFooterComponent={loading ? <Spinner marginTop="$3" /> : null}
@@ -58,7 +72,15 @@ export function TransactionsScreen() {
         )}
       </View>
 
-      <TransactionModal open={open} onClose={onClose} />
+      <TransactionModal
+        open={open}
+        onClose={() => {
+          setSelectedTransaction(null);
+          onClose();
+        }}
+        onSaved={refresh}
+        transaction={selectedTransaction}
+      />
     </YStack>
   );
 }

@@ -10,12 +10,10 @@ import {
   updateDoc,
   where,
   Timestamp,
-  serverTimestamp,
-  getDoc
+  serverTimestamp
 } from 'firebase/firestore';
-import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 
-import { db, storage } from '@/infra/firebase/firebase';
+import { db } from '@/infra/firebase/firebase';
 
 const coll = (uid: string) => collection(db, 'users', uid, 'transactions');
 
@@ -26,6 +24,15 @@ export type TxFilters = {
   startDate?: Date;
   endDate?: Date;
   search?: string;
+};
+
+const stripUndefined = <T extends Record<string, any>>(obj: T): T => {
+  const o: any = {};
+  Object.keys(obj).forEach((k) => {
+    const v = (obj as any)[k];
+    if (v !== undefined) o[k] = v;
+  });
+  return o;
 };
 
 export async function listTransactionsPage(
@@ -70,34 +77,39 @@ export async function listTransactionsPage(
 }
 
 export async function createTransaction(uid: string, input: any) {
-  const payload = {
+  const parsedDate = new Date(String(input.date ?? ''));
+  if (isNaN(parsedDate.getTime())) throw new Error('Data inválida.');
+  const parsedAmount = Number(input.amount);
+  if (!isFinite(parsedAmount)) throw new Error('Valor inválido.');
+
+  const payloadRaw = {
     ...input,
-    date: Timestamp.fromDate(new Date(input.date as string)),
-    amount: Number(input.amount),
+    // só inclua se existir
+    ...(input.receiptUrl ? { receiptUrl: input.receiptUrl } : {}),
+    date: Timestamp.fromDate(parsedDate),
+    amount: parsedAmount,
     createdAt: serverTimestamp(),
     updatedAt: serverTimestamp()
   };
-  const d = await addDoc(coll(uid), payload);
-  const snap = await getDoc(d);
-  return { id: d.id, ...snap.data() };
+
+  const payload = stripUndefined(payloadRaw);
+
+  console.log('[tx] addDoc start');
+  const ref = await addDoc(coll(uid), payload);
+  console.log('[tx] addDoc ok id=', ref.id);
+  return { id: ref.id };
 }
 
 export async function updateTransaction(uid: string, id: string, input: any) {
-  await updateDoc(doc(coll(uid), id), {
+  const toUpdateRaw = {
     ...input,
-    ...(input.date ? { date: Timestamp.fromDate(new Date(input.date as string)) } : {}),
+    ...(input.date ? { date: Timestamp.fromDate(new Date(String(input.date))) } : {}),
     ...(typeof input.amount === 'number' ? { amount: input.amount } : {}),
+    ...(input.receiptUrl ? { receiptUrl: input.receiptUrl } : {}),
     updatedAt: serverTimestamp()
-  });
-}
+  };
 
-export async function uploadReceipt(uid: string, localUri: string) {
-  const resp = await fetch(localUri);
-  const blob = await resp.blob();
+  const toUpdate = stripUndefined(toUpdateRaw);
 
-  const key = `receipts/${uid}/${Date.now()}-${Math.random().toString(36).slice(2)}.jpg`;
-  const storageRef = ref(storage, key);
-
-  await uploadBytes(storageRef, blob);
-  return await getDownloadURL(storageRef);
+  await updateDoc(doc(coll(uid), id), toUpdate);
 }

@@ -1,5 +1,8 @@
+import { ChevronDown, ListFilter } from '@tamagui/lucide-icons';
 import React, { useState } from 'react';
-import { XStack, YStack, Button, Input, Label, Select, Text } from 'tamagui';
+import { XStack, YStack, Button, Input, Label, Accordion, Paragraph } from 'tamagui';
+
+import { Select } from '@/components/Select/Select';
 
 type Props = {
   onChange: (f: any) => void;
@@ -31,78 +34,101 @@ export function TransactionsFilters({ onChange }: Props) {
   };
 
   return (
-    <YStack gap="$3">
-      <XStack gap="$2" flexWrap="wrap">
-        {/* Type */}
-        <YStack width="48%">
-          <Label>Tipo</Label>
-          <Select value={type} onValueChange={setType}>
-            <Select.Trigger>
-              <Text>{type || 'Todos'}</Text>
-            </Select.Trigger>
-            <Select.Content>
-              <Select.Item index={1} value="">
-                Todos
-              </Select.Item>
-              <Select.Item index={2} value="Entrada">
-                Entrada
-              </Select.Item>
-              <Select.Item index={3} value="Saída">
-                Saída
-              </Select.Item>
-            </Select.Content>
-          </Select>
-        </YStack>
+    <Accordion overflow="hidden" type="multiple" marginBottom="$4">
+      <Accordion.Item value="a1">
+        <Accordion.Trigger
+          flexDirection="row"
+          justifyContent="space-between"
+          alignItems="center"
+          borderWidth={0}
+          borderRadius={8}
+        >
+          <XStack alignItems="center" gap="$2">
+            <ListFilter color="$primary400" />
+            <Paragraph color="$primary400" fontWeight="700">
+              Filtros
+            </Paragraph>
+          </XStack>
+          <ChevronDown color="$primary400" />
+        </Accordion.Trigger>
+        <Accordion.HeightAnimator>
+          <Accordion.Content exitStyle={{ opacity: 0 }}>
+            <YStack gap="$3">
+              <XStack gap="$2" flexWrap="wrap">
+                <YStack width="48%">
+                  <Select
+                    value={type}
+                    onValueChange={setType}
+                    placeholder="Tipo"
+                    variant="outlined"
+                    iconAfter={ChevronDown as any}
+                    options={[
+                      { label: 'Todos', value: '' },
+                      { label: 'Entrada', value: 'Entrada' },
+                      { label: 'Saída', value: 'Saída' }
+                    ]}
+                    disablePreventBodyScroll
+                  />
+                </YStack>
 
-        {/* Categoria */}
-        <YStack width="48%">
-          <Label>Categoria</Label>
-          <Select value={category} onValueChange={setCategory}>
-            <Select.Trigger>
-              <Text>{category || 'Todas'}</Text>
-            </Select.Trigger>
-            <Select.Content>
-              {['Alimentação', 'Transporte', 'Salário', 'Lazer', 'Outros'].map((c, index) => (
-                <Select.Item index={index} key={c} value={c}>
-                  {c}
-                </Select.Item>
-              ))}
-            </Select.Content>
-          </Select>
-        </YStack>
+                <YStack width="48%">
+                  <Select
+                    value={category}
+                    onValueChange={setCategory}
+                    placeholder="Categoria"
+                    variant="outlined"
+                    iconAfter={ChevronDown as any}
+                    options={[
+                      { label: 'Todas', value: '' },
+                      { label: 'Alimentação', value: 'Alimentação' },
+                      { label: 'Transporte', value: 'Transporte' },
+                      { label: 'Salário', value: 'Salário' },
+                      { label: 'Lazer', value: 'Lazer' },
+                      { label: 'Outros', value: 'Outros' }
+                    ]}
+                    disablePreventBodyScroll
+                  />
+                </YStack>
 
-        <YStack width="48%">
-          <Label>Pagamento</Label>
-          <Select value={paymentMethod} onValueChange={setPaymentMethod}>
-            <Select.Trigger>
-              <Text>{paymentMethod || 'Todos'}</Text>
-            </Select.Trigger>
-            <Select.Content>
-              {['PIX', 'Crédito', 'Débito', 'Boleto', 'Dinheiro'].map((p, index) => (
-                <Select.Item index={index} key={p} value={p}>
-                  {p}
-                </Select.Item>
-              ))}
-            </Select.Content>
-          </Select>
-        </YStack>
+                <YStack width="48%">
+                  <Select
+                    value={paymentMethod}
+                    onValueChange={setPaymentMethod}
+                    placeholder="Pagamento"
+                    variant="outlined"
+                    iconAfter={ChevronDown as any}
+                    options={[
+                      { label: 'Todos', value: '' },
+                      { label: 'PIX', value: 'PIX' },
+                      { label: 'Crédito', value: 'Crédito' },
+                      { label: 'Débito', value: 'Débito' },
+                      { label: 'Boleto', value: 'Boleto' },
+                      { label: 'Dinheiro', value: 'Dinheiro' }
+                    ]}
+                    disablePreventBodyScroll
+                  />
+                </YStack>
+                <YStack width="48%" />
+                <YStack width="48%">
+                  <Label>Início</Label>
+                  <Input value={startDate} onChangeText={setStartDate} placeholder="yyyy-mm-dd" />
+                </YStack>
+                <YStack width="48%">
+                  <Label>Fim</Label>
+                  <Input value={endDate} onChangeText={setEndDate} placeholder="yyyy-mm-dd" />
+                </YStack>
+              </XStack>
 
-        <YStack width="48%">
-          <Label>Início</Label>
-          <Input value={startDate} onChangeText={setStartDate} placeholder="yyyy-mm-dd" />
-        </YStack>
-        <YStack width="48%">
-          <Label>Fim</Label>
-          <Input value={endDate} onChangeText={setEndDate} placeholder="yyyy-mm-dd" />
-        </YStack>
-      </XStack>
-
-      <XStack gap="$2" justifyContent="flex-end">
-        <Button onPress={clear} variant="outlined">
-          Limpar
-        </Button>
-        <Button onPress={apply}>Aplicar</Button>
-      </XStack>
-    </YStack>
+              <XStack gap="$2" justifyContent="flex-end">
+                <Button onPress={clear} variant="outlined">
+                  Limpar
+                </Button>
+                <Button onPress={apply}>Aplicar</Button>
+              </XStack>
+            </YStack>
+          </Accordion.Content>
+        </Accordion.HeightAnimator>
+      </Accordion.Item>
+    </Accordion>
   );
 }

@@ -3,7 +3,13 @@ import Constants from 'expo-constants';
 import { initializeApp, getApps } from 'firebase/app';
 import { getAuth, initializeAuth, type Auth } from 'firebase/auth';
 import * as firebaseAuth from 'firebase/auth';
-import { getFirestore, serverTimestamp } from 'firebase/firestore';
+import {
+  Firestore,
+  getFirestore,
+  initializeFirestore,
+  type FirestoreSettings
+} from 'firebase/firestore';
+import { serverTimestamp } from 'firebase/firestore';
 import { getStorage } from 'firebase/storage';
 import { Platform } from 'react-native';
 
@@ -33,8 +39,20 @@ if (Platform.OS === 'web') {
     auth = getAuth(app);
   }
 }
-
 export { auth };
-export const db = getFirestore(app);
+
+let db: Firestore;
+if (Platform.OS === 'web') {
+  db = getFirestore(app);
+} else {
+  db = initializeFirestore(app, {
+    experimentalAutoDetectLongPolling: true,
+    useFetchStreams: false,
+    ignoreUndefinedProperties: true
+  } as FirestoreSettings);
+}
+export { db };
+
 export const storage = getStorage(app);
+
 export const now = () => serverTimestamp();

@@ -23,7 +23,9 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     EXPO_PUBLIC_FB_PROJECT_ID: process.env.EXPO_PUBLIC_FB_PROJECT_ID,
     EXPO_PUBLIC_FB_STORAGE_BUCKET: process.env.EXPO_PUBLIC_FB_STORAGE_BUCKET,
     EXPO_PUBLIC_FB_MESSAGING_SENDER_ID: process.env.EXPO_PUBLIC_FB_MESSAGING_SENDER_ID,
-    EXPO_PUBLIC_FB_APP_ID: process.env.EXPO_PUBLIC_FB_APP_ID
+    EXPO_PUBLIC_FB_APP_ID: process.env.EXPO_PUBLIC_FB_APP_ID,
+    EXPO_PUBLIC_SUPABASE_URL: process.env.EXPO_PUBLIC_SUPABASE_URL,
+    EXPO_PUBLIC_SUPABASE_ANON_KEY: process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY
   },
   plugins: [
     'expo-router',
@@ -42,7 +44,10 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
       'expo-build-properties',
       {
         ios: {
-          useFrameworks: 'static'
+          useFrameworks: 'static',
+          infoPlist: {
+            NSPhotoLibraryAddUsageDescription: 'Precisamos salvar seus recibos na Galeria.'
+          }
         }
       }
     ],

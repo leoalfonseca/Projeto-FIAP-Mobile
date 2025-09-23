@@ -1,13 +1,17 @@
-import { BanknoteArrowDown, BanknoteArrowUp } from '@tamagui/lucide-icons';
-import { YStack, Text, XStack, Card } from 'tamagui';
+import { BanknoteArrowDown, BanknoteArrowUp, Download, Pencil } from '@tamagui/lucide-icons';
+import { Text, XStack, Card, Button } from 'tamagui';
+
+import FormatNumber from '@/components/FormatNumber/FormatNumber';
 
 import { Transaction } from '../model/Transaction';
 
 interface TransactionCardProps {
   transaction: Transaction;
+  onEdit?: () => void;
+  onDownloadReceipt?: () => void;
 }
 
-export function TransactionCard({ transaction }: TransactionCardProps) {
+export function TransactionCard({ transaction, onEdit, onDownloadReceipt }: TransactionCardProps) {
   return (
     <Card
       padding="$4"
@@ -19,25 +23,30 @@ export function TransactionCard({ transaction }: TransactionCardProps) {
       shadowColor="#000"
     >
       <XStack justifyContent="space-between" alignItems="center">
-        <YStack width={30}>
-          {transaction.type === 'Entrada' ? (
-            <BanknoteArrowUp color="$green500" />
-          ) : (
-            <BanknoteArrowDown color="$red500" />
-          )}
-        </YStack>
-        <Text fontSize={14} fontWeight="500" width={80} textAlign="right" color="$primary400">
+        {transaction.type === 'Entrada' ? (
+          <BanknoteArrowUp color="$green500" />
+        ) : (
+          <BanknoteArrowDown color="$red500" />
+        )}
+        <Text fontSize={14} fontWeight="500" textAlign="right" color="$primary400">
           {transaction?.type}
         </Text>
-        <Text fontSize={14} fontWeight="500" width={80} textAlign="right" color="$primary400">
-          {transaction?.time}
-        </Text>
-        <Text fontSize={14} fontWeight="500" width={80} textAlign="right" color="$primary400">
+
+        <Text fontSize={14} fontWeight="500" textAlign="right" color="$primary400">
           {transaction?.paymentMethod}
         </Text>
-        <Text fontSize={14} fontWeight="500" width={80} textAlign="right" color="$primary400">
-          {transaction?.value}
+        <Text fontSize={14} fontWeight="500" textAlign="right" color="$primary400">
+          {FormatNumber({ number: transaction?.amount, format: 'currency' })}
         </Text>
+        {onDownloadReceipt && (
+          <Button
+            icon={<Download />}
+            size={36}
+            color={'$gray800'}
+            onPress={onDownloadReceipt}
+          ></Button>
+        )}
+        <Button icon={<Pencil />} size={36} color={'$gray800'} onPress={onEdit}></Button>
       </XStack>
     </Card>
   );
